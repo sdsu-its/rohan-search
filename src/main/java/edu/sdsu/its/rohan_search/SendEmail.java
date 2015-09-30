@@ -1,6 +1,5 @@
 package edu.sdsu.its.rohan_search;
 
-import com.sun.tools.javac.util.Log;
 import edu.sdsu.its.rohan_search.models.File;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailAttachment;
@@ -33,6 +32,12 @@ public class SendEmail {
         new SendEmail().email_ticket(new Ticket(file).ticket_file_name, file).send("tom@tompaulus.com");
     }
 
+    /**
+     * Send Email for Files that are self contained and do not have Legal Restrictions on their transmission.
+     *
+     * @param file {@link String} File that should be sent to requester
+     * @return {@link SendEmail} Instance of SendEmail
+     */
     public SendEmail email_file(final File file) {
         Logger.getLogger(getClass()).info(String.format("Emailing File with name %s", file.getFile_name()));
         EmailAttachment attachment = new EmailAttachment();
@@ -56,6 +61,13 @@ public class SendEmail {
         return this;
     }
 
+    /**
+     * Send Email for Files that are Copyrighted and use a Streaming Ticket to be compliant with laws and regulations.
+     *
+     * @param ticket_name {@link String} Name of the Ticket File
+     * @param file {@link File} File that should be sent to requester
+     * @return {@link SendEmail} Instance of SendEmail
+     */
     public SendEmail email_ticket(final String ticket_name, final File file) {
         Logger.getLogger(getClass()).info(String.format("Emailing Streaming Ticket for %s", ticket_name));
         EmailAttachment attachment = new EmailAttachment();
@@ -80,20 +92,30 @@ public class SendEmail {
         return this;
     }
 
-    String readFile(String path) {
+    /**
+     * Read file from Local File System
+     *
+     * @param path {@link String} File Path of file to read in
+     * @return {@link String} File contents as a String
+     */
+    String readFile(final String path) {
+        Logger.getLogger(getClass()).debug(String.format("Reading file from path %s into memory", path));
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
         Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
         return scanner.hasNext() ? scanner.next() : "";
     }
 
     /**
-     * Generate HTML Message for email.
+     * Generate HTML Message for files that have streaming tickets associated with them.
+     * Includes instructions for how to upload and use the streaming ticket in Blackboard.
      *
      * @param file_name {@link String} Name of the file that was requested.
      * @param file_link {@link String} Direct link to the File.
      * @return {@link String} HTML Message for Sending
      */
     private String make_ticket_message(final String file_name, final String file_link) {
+        Logger.getLogger(getClass()).debug(String.format("Generating HTML with Streaming Ticket for %s", file_name));
+
         String message;
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
@@ -102,11 +124,19 @@ public class SendEmail {
                 .replace("{{ file_link }}", file_link)
                 .replace("{{ generated_on_date_footer }}", timestamp.toString());
 
-
         return message;
     }
 
+    /**
+     * Generate HTML Message for files that do not have streaming tickets associated with them.
+     *
+     * @param file_name {@link String} Name of the File
+     * @param file_link {@link String} Public Link to the File
+     * @return {@link String} HTML Message
+     */
     private String make_file_message(final String file_name, final String file_link) {
+        Logger.getLogger(getClass()).debug(String.format("Generating HTML with File Attachment for %s", file_name));
+
         String message;
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
@@ -115,16 +145,15 @@ public class SendEmail {
                 .replace("{{ file_link }}", file_link)
                 .replace("{{ generated_on_date_footer }}", timestamp.toString());
 
-
         return message;
     }
 
-        /**
-         * TODO JavaDoc
-         *
-         * @param file
-         * @return
-         */
+    /**
+     * Download Files from Streaming Server so that they can be attached to the Email
+     *
+     * @param file {@link File} File to Download
+     * @return {@link String} File Path where the file was saved
+     */
     String download(final File file) {
         Logger.getLogger(getClass()).info(String.format("Downloading %s to tmp for Emailing", file.getFile_name()));
 
@@ -146,7 +175,7 @@ public class SendEmail {
             fos.write(fileData);  // write out the file we want to save.
             fos.close(); // close the output stream writer
         } catch (Exception e) {
-            Logger.getLogger(String.format("Problem Downloading %s", file.getFile_name(), e));
+            Logger.getLogger(getClass()).error(String.format("Problem Downloading %s", file.getFile_name()), e);
         }
 
         return "tmp/" + file.getFile_name();
@@ -159,6 +188,7 @@ public class SendEmail {
      */
     public void send(final String to_email) {
         try {
+            Logger.getLogger(getClass()).info(String.format("Sending Email Message TO: %s", to_email));
             mEmail.addTo(to_email);
             mEmail.send();
         } catch (EmailException e) {

@@ -21,13 +21,18 @@ public class HTML_Table {
         addition += String.format("<td>%s</td>", file.getFile_name());
         addition += String.format("<td>%s</td>", file.getFile_size());
 //        addition += String.format("<td><a href=\"%s\" target=\"_blank\">%s</a></td>", file.getPublic_link(), file.getPublic_link());
-        addition += String.format("<td><button onclick=\"getEmail('%s', '%s')\">Email Streaming Ticket</button></td>", file.getFile_name(), file.getFile_path());
+        if (file.getExtension().equals("html")) {
+            addition += String.format("<td><button onclick=\"getEmail('%s', '%s')\">Email File &amp; Link</button></td>", file.getFile_name(), file.getFile_path());
+
+        } else {
+            addition += String.format("<td><button onclick=\"getEmail('%s', '%s')\">Email Streaming Ticket</button></td>", file.getFile_name(), file.getFile_path());
+        }
         addition += "</tr>";
 
         html_content += addition;
     }
 
-    public String getHtml_content(){
+    public String getHtml_content() {
         html_content += "</table>";
 
         return html_content;

@@ -47,7 +47,7 @@ public class Web {
                 "\n" +
                 "  <script>\n" +
                 "    function getEmail (name, path) {\n" +
-                "      var email = prompt(\"Enter your SendEmail\");\n" +
+                "      var email = prompt(\"Enter your Email\");\n" +
                 "      get(\"./email?name=\"+ name +\"&path=\"+ path +\"&email=\" + email);" +
                 "      alert(\"Sent Streaming Ticket to \" + email);\n" +
                 "    }\n" +
@@ -119,7 +119,13 @@ public class Web {
         file.setFile_path(path);
         file.setFile_name(name);
 
-        new SendEmail(new Ticket(file).ticket_file_name, file).send(email);
+        if (!file.getExtension().equals("html")) {
+            String ticket_name = new Ticket(file).ticket_file_name;
+            new SendEmail().email_ticket(ticket_name, file).send(email);
+        }
+        else {
+            new SendEmail().email_file(file).send(email);
+        }
 
         return Response.status(Response.Status.OK).build();
     }

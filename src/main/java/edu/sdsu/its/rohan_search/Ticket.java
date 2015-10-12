@@ -18,6 +18,7 @@ import java.util.Scanner;
 
 public class Ticket {
     public final String ticket_file_name;
+    public String html;
 
     /**
      * Generate the Streaming Ticket and save it to a temporary file.
@@ -28,7 +29,7 @@ public class Ticket {
         Logger.getLogger(getClass()).info(String.format("Generating Streaming Ticket for %s", file.getStripped_file_name()));
         Logger.getLogger(getClass()).debug(String.format("Stripped File Name: %s\nStripped File Path: %s", file.getStripped_file_name(), file.getStripped_file_path()));
 
-        String html = this.readFile("ticket_template.html");
+        html = this.readFile("ticket_template.html");
 
         html = String.format(html, file.getStripped_file_name(), file.getStripped_file_name(), file.getExtension(), "user/" + file.getStripped_file_path());
 
@@ -49,13 +50,13 @@ public class Ticket {
         new Ticket(file);
     }
 
-    String readFile(String path) {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
+    String readFile(final String path) {
+        InputStream inputStream =getClass().getClassLoader().getResourceAsStream(path);
         Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
         return scanner.hasNext() ? scanner.next() : "";
     }
 
-    void writeFile(String path, String data) throws FileNotFoundException, UnsupportedEncodingException {
+    void writeFile(final String path, final String data) throws FileNotFoundException, UnsupportedEncodingException {
         java.io.File tmp_folder = new java.io.File("tmp");
         if (!tmp_folder.exists()) {
             Logger.getLogger(getClass()).info("Making tmp Folder");
@@ -64,6 +65,7 @@ public class Ticket {
             }
         }
 
+        Logger.getLogger(getClass()).info(String.format("Saving data to %s", path));
         PrintWriter writer = new PrintWriter(path, "UTF-8");
         writer.println(data);
         writer.close();

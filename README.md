@@ -12,7 +12,4 @@ All the environment variables are stored in ```config.properites```, a sample of
 
 The DB connector is written to talk directly with a Heroku Postgres Database via SSL (which allows for usage outside of the Herkou Cloud).
 
-### Endpoints
-Package includes an echo endpoint for testing which can be reached at /rest/echo?m=Hi!
-
-Searching can be done 2 ways, making a GET request to /rest/search?q=replace_me which returns a HTML page, where as making a POST request to /rest/search with query=replace_me as a Form Encoded Application in the POST Body will return a JSON Array with the files that match the search query.
+### See the [Wiki](https://github.com/sdsu-its/rohan-search/wiki) for API Usage Information.

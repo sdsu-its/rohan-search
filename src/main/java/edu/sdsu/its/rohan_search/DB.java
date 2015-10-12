@@ -70,10 +70,11 @@ public class DB {
      * @return {@link List} List of File {@link File} Objects that match the supplied query.
      */
     public List<File> search(final String query) {
+        Logger.getLogger(getClass()).info(String.format("Searching for %s (EXACT)", query));
         List<File> files = new ArrayList<>();
         try {
             String sql = "SELECT *\n" +
-                    "FROM files where (file_name ~* '" + query + "')\n" +
+                    "FROM files where (file_name ~* '" + escape(query) + "')\n" +
                     "ORDER BY file_name ASC;";
 
             Logger.getLogger(getClass()).info(String.format("Making SQL Call - %s", sql));
@@ -95,6 +96,45 @@ public class DB {
         }
 
         return files;
+    }
+
+    /**
+     * Search for a Phrase. The Phrase is split on spaces and commas before the DB is searched.
+     * Useful for when you want to search for the title of a movie.
+     *
+     * @param query {@link String} Phrase to search for
+     * @return {@link List} List fo Results
+     */
+    public List<File> search_phrase(final String query) {
+        Logger.getLogger(getClass()).info(String.format("Searching for %s (as a Phrase)", query));
+        List<File> results = new ArrayList<>();
+
+        for (String word : query.split(" |,| , ")) {
+            for (File searchResult : instance.search(word)) {
+                boolean inDB = false;
+                for (File result : results) {
+                    if (result.equals(searchResult)) {
+                        inDB = true;
+                        break;
+                    }
+                }
+                if (!inDB) {
+                    results.add(searchResult);
+                }
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * Escape the Search input to ensure that nothing bad can be done.
+     *
+     * @param input {@link String} Dangerous String to Escape
+     * @return {@link String} Escaped String
+     */
+    public String escape(final String input) {
+        return input.replace("'", "''");
     }
 }
 

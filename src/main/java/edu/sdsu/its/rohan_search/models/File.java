@@ -11,6 +11,11 @@ public class File {
     public String file_path;
     public String file_size;
     public String public_link;
+    public String ticket_link;
+
+    public boolean equals(File obj) {
+        return this.file_name.equals(obj.getFile_name()) && this.file_path.equals(obj.getFile_path()) && this.file_size.equals(obj.getFile_size());
+    }
 
     public String getFile_name() {
         return file_name;
@@ -27,6 +32,7 @@ public class File {
     public void setFile_path(final String file_path) {
         this.file_path = file_path.replace(System.getenv("HOME"), "~");
         this.public_link = file_path.replace("/nas/streaming/faculty/ondemand/", "http://video.sdsu.edu/nas/");
+        this.ticket_link = String.format("/ticket?path=%s&name=%s", file_path, file_name);
     }
 
     public String getFile_size() {

@@ -27,6 +27,8 @@ public class Web {
     @Path("search")
     @Produces(MediaType.TEXT_HTML)
     public Response search(@QueryParam("q") final String query, @QueryParam("t") final String title) {
+        Logger.getLogger(getClass()).info(String.format("Recieved Request to search for q:%s & t:%s", query, title));
+
         List<File> results;
 
         if (title != null) {
@@ -58,7 +60,7 @@ public class Web {
                 "  <script>\n" +
                 "    function getEmail (name, path) {\n" +
                 "      var email = prompt(\"Enter your Email\");\n" +
-                "      get(\"./email?name=\"+ name +\"&path=\"+ path +\"&email=\" + email);" +
+                "      get(\"./rest/email?name=\"+ name +\"&path=\"+ path +\"&email=\" + email);" +
                 "      alert(\"Sent Streaming Ticket to \" + email);\n" +
                 "    }\n" +
                 "\n" +
@@ -129,8 +131,7 @@ public class Web {
         final Response.ResponseBuilder status;
         if (results.size() != 0) {
             status = Response.status(Response.Status.OK);
-        }
-        else {
+        } else {
             status = Response.status(Response.Status.NOT_FOUND);
         }
         return status.entity(gson.toJson(results)).build();

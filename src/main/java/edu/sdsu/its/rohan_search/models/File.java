@@ -54,7 +54,7 @@ public class File {
     }
 
     public String getStripped_file_path() {
-        return file_path.split("/user/")[1].split("/")[0];
+        return file_path.split("/user/")[1].replace("/" + getFile_name(), "");
     }
 
     public String getExtension() {

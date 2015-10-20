@@ -77,7 +77,7 @@ public class DB {
                     "FROM files where (file_name ~* '" + escape(query) + "')\n" +
                     "ORDER BY file_name ASC;";
 
-            Logger.getLogger(getClass()).info(String.format("Making SQL Call - %s", sql));
+            Logger.getLogger(getClass()).debug(String.format("Making SQL Call - %s", sql));
 
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);

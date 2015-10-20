@@ -5,69 +5,80 @@
 */
 
 /*-------------------BASE STYLES--------------------*/
-html, body
-{
+html, body {
     padding: 0;
     margin: .75em;
 }
 
-html	{
+html {
     background: #f8f4e8 url("bg_tile.jpg") left top repeat;
 }
 
-body	{
+body {
     font: 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-#wrapper	{
+#wrapper {
     width: 430px;
     margin: 200px auto;
 }
 
-
-h1	{
+h1 {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 2em;
     font-weight: bold;
 }
 
-p	{
+p {
     color: #545454;
     margin-top: 50px;
 }
 
-a	{
+a, a:visited {
     text-decoration: none;
-    color: #000;
+    color: inherit;
     padding-bottom: 1px;
 }
 
-a:hover, a:focus	{
-    border-bottom: 1px dotted #000;
+a:hover, a:focus {
+    font-weight: bold;
+    color: inherit;
+}
+
+/*--------------------CUSTOM CLASSES-------------------*/
+
+.column_header {
+    font-weight: bold;
+}
+
+#search_results {
+    padding-top: 2em;
 }
 
 /*---------------------SEARCH FIELD--------------------*/
-input[type="text"]	{
+input[type="text"] {
     float: left;
     width: 230px;
     padding: 15px 5px 5px 5px;
-    margin-top: 5px;
     margin-left: 3px;
     border: 1px solid #999999;
+
+    font-size: 16px;
 
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
 }
 
-input[type="submit"].solid	{
+input[type="submit"].solid {
     float: left;
     cursor: pointer;
     width: 130px;
+    height: 39px;
     padding: 8px 6px;
     margin-left: 20px;
     background-color: #f8b838;
-    color: rgba(134, 79, 11, 0.8);
+    color: rgb(134, 79, 11);
     text-transform: uppercase;
     font-weight: bold;
     border: 1px solid #99631d;
@@ -83,20 +94,10 @@ input[type="submit"].solid:hover, input[type="submit"].solid:focus {
     background: #ffd842;
 }
 
-input[type="submit"].solid:active	{
+input[type="submit"].solid:active {
     background: #f6a000;
     position: relative;
     top: 5px;
     border: 1px solid #702d00;
 
 }
-
-
-.column_header {
-    font-weight: bold;
-}
-
-#search_results {
-    padding-top: 2em;
-}
-

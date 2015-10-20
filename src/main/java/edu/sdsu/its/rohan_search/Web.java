@@ -30,7 +30,6 @@ public class Web {
         Logger.getLogger(getClass()).info(String.format("Recieved Request to search for q:%s & t:%s", query, title));
 
         List<File> results;
-
         if (title != null) {
             results = DB.getInstance().search_phrase(title);
         } else if (query != null) {
@@ -39,43 +38,11 @@ public class Web {
             results = new ArrayList<>();
         }
 
-        Logger.getLogger(getClass()).info(String.format("Search for %s returned %d results", query, results.size()));
-
-        String html = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n" +
-                "<html>\n" +
-                "<head>\n" +
-                "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n" +
-                "  <title>Search Results</title>\n" +
-                "\n" +
-                "  <style>\n" +
-                "    a {\n" +
-                "      text-decoration: none;\n" +
-                "    }\n" +
-                "\n" +
-                "    .column_header {\n" +
-                "      font-weight: bold;\n" +
-                "    }\n" +
-                "  </style>\n" +
-                "\n" +
-                "  <script>\n" +
-                "    function getEmail (name, path) {\n" +
-                "      var email = prompt(\"Enter your Email\");\n" +
-                "      get(\"./rest/email?name=\"+ name +\"&path=\"+ path +\"&email=\" + email);" +
-                "      alert(\"Sent Streaming Ticket to \" + email);\n" +
-                "    }\n" +
-                "\n" +
-                "    function get(url) {\n" +
-                "      var xmlHttp = new XMLHttpRequest();\n" +
-                "      xmlHttp.open(\"GET\", url, true); // true for asynchronous\n" +
-                "      xmlHttp.send(null);\n" +
-                "    }\n" +
-                "  </script>\n" +
-                "</head>\n" +
-                "\n" +
-                "<body>\n" +
-                "%s\n" +
-                "</body>\n" +
-                "</html>\n";
+        if (query != null) {
+            Logger.getLogger(getClass()).info(String.format("Search for %s returned %d results", query, results.size()));
+        } else {
+            Logger.getLogger(getClass()).info(String.format("Search for %s returned %d results", title, results.size()));
+        }
 
         String content;
         Response.ResponseBuilder status;
@@ -86,10 +53,10 @@ public class Web {
             status = Response.status(Response.Status.OK);
         } else {
             content = "No Files Found!";
-            status = Response.status(Response.Status.NOT_FOUND);
+            status = Response.status(Response.Status.OK);
         }
 
-        return status.entity(String.format(html, content)).build();
+        return status.entity(content).build();
     }
 
     @POST
@@ -142,18 +109,18 @@ public class Web {
     @Path("email")
     @Produces(MediaType.TEXT_PLAIN)
     public Response email(@QueryParam("email") final String email, @QueryParam("path") final String path,
-                          @QueryParam("name") final String name) {
+                          @QueryParam("name") final String name, @QueryParam("attach") final String attach) {
         Logger.getLogger(getClass()).info(String.format("Sending Streaming Ticket for %s to %s", name, email));
 
         File file = new File();
         file.setFile_path(path);
         file.setFile_name(name);
 
-        if (!file.getExtension().equals("html")) {
+        if (!file.getExtension().equals("html") && !file.getExtension().equals("swf")) {
             String ticket_name = new Ticket(file).ticket_file_name;
             new SendEmail().email_ticket(ticket_name, file).send(email);
         } else {
-            new SendEmail().email_file(file).send(email);
+            new SendEmail().email_file("true".equals(attach), file).send(email);
         }
 
         return Response.status(Response.Status.OK).build();

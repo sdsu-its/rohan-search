@@ -3,7 +3,11 @@
  */
 function doSearch() {
     var term = document.getElementById("search").value;
-    get("./rest/search?t=" + term, true, false);
+    update('search_results', "Searching..." +
+        "<br/>" +
+        "<br/>" +
+        "This may take a moment, depending on how board your search term is.");
+    get("./rest/search?t=" + term, true);
 }
 
 /**
@@ -11,9 +15,8 @@ function doSearch() {
  *
  * @param url (String) URL to which the request should be made
  * @param callback (Boolean) If the Return Information is desired
- * @param async (Boolean) Can the task be done in the background?
  */
-function get(url, callback, async) {
+function get(url, callback) {
     var xmlHttp = new XMLHttpRequest();
     if (callback) {
         xmlHttp.onreadystatechange = function () {
@@ -23,7 +26,7 @@ function get(url, callback, async) {
         };
     }
 
-    xmlHttp.open('GET', url, async); // true for asynchronous
+    xmlHttp.open('GET', url);
     xmlHttp.send();
 }
 
@@ -36,19 +39,23 @@ function get(url, callback, async) {
 function update(id, text) {
     // Get the <div> above with its content
     var origContent = document.getElementById(id);
-    // Create the first shadow root
-    var shadowroot = origContent.createShadowRoot();
-    shadowroot.innerHTML = text;
+    origContent.innerHTML = text;
 }
 
+//noinspection JSUnusedGlobalSymbols
 /**
  * Get the user's email to send them the streaming ticket
  *
  * @param name (String) Name of the file for which the ticket is being requested.
  * @param path (String) Path of the file for which the ticket is being requested.
  */
-function getEmail(name, path) {
+function getEmail(name, path, attach) {
     var email = prompt("Enter your Email");
-    get("./rest/email?name=" + name + "&path=" + path + "&email=" + email, false, true);
-    alert("Sent Streaming Ticket to " + email);
+    if (email != null && email != " ") {
+        get("./rest/email?name=" + name + "&path=" + path + "&email=" + email + "&attach=" + attach, false);
+        alert("Sent Streaming Ticket to " + email);
+    }
+    else {
+        alert("No valid email was entered. Aborting!")
+    }
 }

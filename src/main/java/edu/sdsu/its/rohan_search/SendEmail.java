@@ -35,16 +35,19 @@ public class SendEmail {
     /**
      * Send Email for Files that are self contained and do not have Legal Restrictions on their transmission.
      *
+     * @param  attach Wether or not to attach the file in the email
      * @param file {@link String} File that should be sent to requester
      * @return {@link SendEmail} Instance of SendEmail
      */
-    public SendEmail email_file(final File file) {
+    public SendEmail email_file(final boolean attach, final File file) {
         Logger.getLogger(getClass()).info(String.format("Emailing File with name %s", file.getFile_name()));
         EmailAttachment attachment = new EmailAttachment();
-        attachment.setPath(download(file));
-        attachment.setDisposition(EmailAttachment.ATTACHMENT);
-        attachment.setDescription("Requested File");
-        attachment.setName(file.getFile_name());
+        if (attach) {
+            attachment.setPath(download(file));
+            attachment.setDisposition(EmailAttachment.ATTACHMENT);
+            attachment.setDescription("Requested File");
+            attachment.setName(file.getFile_name());
+        }
 
         mEmail.setHostName(new Config().getEmail_host());
         mEmail.setSmtpPort(new Config().getEmail_port());
@@ -53,8 +56,10 @@ public class SendEmail {
         try {
             mEmail.setFrom(new Config().getEmail_from_email(), new Config().getEmail_from_name());
             mEmail.setSubject("Requested File: " + file.getFile_name());
-            mEmail.setHtmlMsg(make_file_message(file.getFile_name(), file.getPublic_link()));
-            mEmail.attach(attachment);
+            mEmail.setHtmlMsg(make_file_message(attach, file.getFile_name(), file.getPublic_link()));
+            if (attach) {
+                mEmail.attach(attachment);
+            }
         } catch (EmailException e) {
             Logger.getLogger(getClass()).error("Problem Making Email", e);
         }
@@ -65,7 +70,7 @@ public class SendEmail {
      * Send Email for Files that are Copyrighted and use a Streaming Ticket to be compliant with laws and regulations.
      *
      * @param ticket_name {@link String} Name of the Ticket File
-     * @param file {@link File} File that should be sent to requester
+     * @param file        {@link File} File that should be sent to requester
      * @return {@link SendEmail} Instance of SendEmail
      */
     public SendEmail email_ticket(final String ticket_name, final File file) {
@@ -130,20 +135,27 @@ public class SendEmail {
     /**
      * Generate HTML Message for files that do not have streaming tickets associated with them.
      *
+     * @param  isAttached If the File is attached to the email (Used to determine which email template should be used.
      * @param file_name {@link String} Name of the File
      * @param file_link {@link String} Public Link to the File
      * @return {@link String} HTML Message
      */
-    private String make_file_message(final String file_name, final String file_link) {
+    private String make_file_message(final boolean isAttached, final String file_name, final String file_link) {
         Logger.getLogger(getClass()).debug(String.format("Generating HTML with File Attachment for %s", file_name));
 
         String message;
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
 
-        message = this.readFile("file_email_template.html").replace("{{ file_name }}", file_name)
-                .replace("{{ file_link }}", file_link)
-                .replace("{{ generated_on_date_footer }}", timestamp.toString());
+        if (isAttached) {
+            message = this.readFile("small_file_email_template.html").replace("{{ file_name }}", file_name)
+                    .replace("{{ file_link }}", file_link)
+                    .replace("{{ generated_on_date_footer }}", timestamp.toString());
+        } else {
+            message = this.readFile("large_file_email_template.html").replace("{{ file_name }}", file_name)
+                    .replace("{{ file_link }}", file_link)
+                    .replace("{{ generated_on_date_footer }}", timestamp.toString());
+        }
 
         return message;
     }

@@ -6,7 +6,7 @@ function doSearch() {
     update('search_results', "Searching..." +
         "<br/>" +
         "<br/>" +
-        "This may take a moment, depending on how board your search term is.");
+        "This may take a moment, depending on how broad your search term is.");
     get("./rest/search?t=" + term, true);
 }
 
@@ -14,7 +14,7 @@ function doSearch() {
  * Make an HTTP GET Request
  *
  * @param url (String) URL to which the request should be made
- * @param callback (Boolean) If the Return Information is desired
+ * @param callback (Boolean) If the return information is desired
  */
 function get(url, callback) {
     var xmlHttp = new XMLHttpRequest();

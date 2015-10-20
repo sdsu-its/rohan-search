@@ -35,7 +35,7 @@ public class SendEmail {
     /**
      * Send Email for Files that are self contained and do not have Legal Restrictions on their transmission.
      *
-     * @param  attach Wether or not to attach the file in the email
+     * @param  attach Whether or not to attach the file in the email
      * @param file {@link String} File that should be sent to requester
      * @return {@link SendEmail} Instance of SendEmail
      */
@@ -135,7 +135,7 @@ public class SendEmail {
     /**
      * Generate HTML Message for files that do not have streaming tickets associated with them.
      *
-     * @param  isAttached If the File is attached to the email (Used to determine which email template should be used.
+     * @param  isAttached If the File is attached to the email (Used to determine which email template should be used)
      * @param file_name {@link String} Name of the File
      * @param file_link {@link String} Public Link to the File
      * @return {@link String} HTML Message

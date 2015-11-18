@@ -31,9 +31,9 @@ public class Web {
 
         List<File> results;
         if (title != null) {
-            results = DB.getInstance().search_phrase(title);
+            results = DB.getInstance().search_phrase(title.trim());
         } else if (query != null) {
-            results = DB.getInstance().search(query);
+            results = DB.getInstance().search(query.trim());
         } else {
             results = new ArrayList<>();
         }

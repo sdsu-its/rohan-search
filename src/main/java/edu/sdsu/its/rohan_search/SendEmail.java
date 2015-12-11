@@ -49,12 +49,12 @@ public class SendEmail {
             attachment.setName(file.getFile_name());
         }
 
-        mEmail.setHostName(new Config().getEmail_host());
-        mEmail.setSmtpPort(new Config().getEmail_port());
-        mEmail.setAuthenticator(new DefaultAuthenticator(new Config().getEmail_username(), new Config().getEmail_password()));
-        mEmail.setSSLOnConnect(new Config().getEmail_ssl());
+        mEmail.setHostName(Param.getParam("fit_email", "host"));
+        mEmail.setSmtpPort(Integer.parseInt(Param.getParam("fit_email", "port")));
+        mEmail.setAuthenticator(new DefaultAuthenticator(Param.getParam("fit_email", "username"), Param.getParam("fit_email", "password")));
+        mEmail.setSSLOnConnect(Boolean.parseBoolean(Param.getParam("fit_email", "ssl")));
         try {
-            mEmail.setFrom(new Config().getEmail_from_email(), new Config().getEmail_from_name());
+            mEmail.setFrom(Param.getParam("fit_email", "from_email"), Param.getParam("fit_email", "from_name"));
             mEmail.setSubject("Requested File: " + file.getFile_name());
             mEmail.setHtmlMsg(make_file_message(attach, file.getFile_name(), file.getPublic_link()));
             if (attach) {
@@ -81,12 +81,12 @@ public class SendEmail {
         attachment.setDescription("Streaming Ticket");
         attachment.setName(ticket_name);
 
-        mEmail.setHostName(new Config().getEmail_host());
-        mEmail.setSmtpPort(new Config().getEmail_port());
-        mEmail.setAuthenticator(new DefaultAuthenticator(new Config().getEmail_username(), new Config().getEmail_password()));
-        mEmail.setSSLOnConnect(new Config().getEmail_ssl());
+        mEmail.setHostName(Param.getParam("fit_email", "host"));
+        mEmail.setSmtpPort(Integer.parseInt(Param.getParam("fit_email", "port")));
+        mEmail.setAuthenticator(new DefaultAuthenticator(Param.getParam("fit_email", "username"), Param.getParam("fit_email", "password")));
+        mEmail.setSSLOnConnect(Boolean.parseBoolean(Param.getParam("fit_email", "ssl")));
         try {
-            mEmail.setFrom(new Config().getEmail_from_email(), new Config().getEmail_from_name());
+            mEmail.setFrom(Param.getParam("fit_email", "from_email"), Param.getParam("fit_email", "from_name"));
             mEmail.setSubject("Streaming Ticket for " + file.getFile_name());
             mEmail.setHtmlMsg(make_ticket_message(file.getFile_name(), file.getPublic_link()));
             mEmail.attach(attachment);

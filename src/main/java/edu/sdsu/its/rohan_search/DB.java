@@ -37,9 +37,9 @@ public class DB {
      * @throws SQLException {@link SQLException} If the DB cannot be reached, or if there is a problem communicating with the DB.
      */
     private static Connection getConnection() throws SQLException {
-        String username = new Config().getDb_user();
-        String password = new Config().getDb_password();
-        String dbUrl = "jdbc:postgresql://" + new Config().getDb_host() + "/" + new Config().getDb_name();
+        String username = Param.getParam("rohan_search", "db_user");
+        String password = Param.getParam("rohan_search", "db_password");
+        String dbUrl = "jdbc:postgresql://" + Param.getParam("rohan_search", "db_host") + "/" + Param.getParam("rohan_search", "db_name");
         Properties props = new Properties();
         props.setProperty("user", username);
         props.setProperty("password", password);
